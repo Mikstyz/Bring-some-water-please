@@ -1,7 +1,7 @@
 package scrper
 
 import (
-	"Bring-some-water-please/utils"
+	"bring_some_water_please/utils"
 	"fmt"
 )
 
