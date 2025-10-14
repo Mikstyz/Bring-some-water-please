@@ -6,13 +6,10 @@ import (
 	botApi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
-func tgbot() {
-
-	// токен бота
-	var tokenBot string = "7833805808:AAHo8zQ_VT2tkbrbwu2-ud0OKzdkgDovpCs"
+func Tgbot(token string) {
 
 	// объект бота + ошибки при подключении
-	bot, err := botApi.NewBotAPI(tokenBot)
+	bot, err := botApi.NewBotAPI(token)
 	if err != nil {
 		log.Panic(err)
 	}
