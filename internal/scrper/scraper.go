@@ -22,52 +22,23 @@ func GetEntitiesModVersion(ModName string) ([]ent.Mods, error) {
 
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatalf("Ошибка при запросе: %v", err)
+		log.Printf("%s", err.Error())
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		log.Fatalf("Неудачный ответ от API: %v", resp.Status)
+		log.Printf("%s", err)
+		return nil, fmt.Errorf("%s", resp.Status)
 	}
 
-	// Массив версий из API
-	var apiMods []struct {
-		ID           string   `json:"id"`
-		Name         string   `json:"name"`
-		GameVersions []string `json:"game_versions"`
-		Loaders      []string `json:"loaders"`
-		Files        []struct {
-			Filename string `json:"filename"`
-			URL      string `json:"url"`
-		} `json:"files"`
-	}
-
+	var apiMods []ent.Mods
 	if err := json.NewDecoder(resp.Body).Decode(&apiMods); err != nil {
-		log.Fatalf("Ошибка при парсинге JSON: %v", err)
+		log.Printf("%s", err.Error())
+		return nil, err
 	}
 
-	var mods []ent.Mods
-
-	for _, m := range apiMods {
-		mod := ent.Mods{
-			ID:           m.ID,
-			Name:         m.Name,
-			GameVersions: m.GameVersions,
-			Loaders:      m.Loaders,
-			Files:        []ent.Files{},
-		}
-
-		for _, f := range m.Files {
-			mod.Files = append(mod.Files, ent.Files{
-				Filename: f.Filename,
-				URL:      f.URL,
-			})
-		}
-
-		mods = append(mods, mod)
-	}
-
-	return mods, nil
+	return apiMods, nil
 }
 
 func View(ModName string) {
