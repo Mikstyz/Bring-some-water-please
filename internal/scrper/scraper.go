@@ -1,7 +1,7 @@
 package scrper
 
 import (
-	ent "bring_some_water_please/internal/entities"
+	entApi "bring_some_water_please/internal/externalapi"
 	utils "bring_some_water_please/utils"
 	"encoding/json"
 	"fmt"
@@ -14,7 +14,7 @@ const Modrinth string = "https://cdn.modrinth.com/data/"
 type TexurePackEnties struct {
 }
 
-func GetEntitiesModVersion(ModName string) ([]ent.Mods, error) {
+func GetEntitiesModVersion(ModName string) ([]entApi.Mods, error) {
 	ModName = utils.SpaceToBars(ModName)
 	url := fmt.Sprintf("https://api.modrinth.com/v2/project/%s/version", ModName)
 
@@ -32,7 +32,7 @@ func GetEntitiesModVersion(ModName string) ([]ent.Mods, error) {
 		return nil, fmt.Errorf("%s", resp.Status)
 	}
 
-	var apiMods []ent.Mods
+	var apiMods []entApi.Mods
 	if err := json.NewDecoder(resp.Body).Decode(&apiMods); err != nil {
 		log.Printf("%s", err.Error())
 		return nil, err

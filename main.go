@@ -1,13 +1,36 @@
 package main
 
-import Sc "bring_some_water_please/internal/scrper"
+import (
+	//Sc "bring_some_water_please/internal/scrper"
+	//Tg "bring_some_water_please/internal/bot"
+	db "bring_some_water_please/internal/database"
+	"log"
+	"os"
 
-//import Tg "bring_some_water_please/internal/bot"
+	"github.com/joho/godotenv"
+)
 
-const tokenBot string = "7833805808:AAHo8zQ_VT2tkbrbwu2-ud0OKzdkgDovpCs"
+func loadConfig() {
+	confFile := "conf.env"
+
+	if _, err := os.Stat(confFile); os.IsNotExist(err) {
+		log.Fatalf("Config file not found: %s", confFile)
+	}
+
+	log.Print("Loading config...")
+
+	if err := godotenv.Load(confFile); err != nil {
+		log.Fatalf("Error loading %s: %v", confFile, err)
+	}
+
+	log.Printf("Config loaded: %s", confFile)
+}
 
 func main() {
-	//Tg.Tgbot(tokenBot)
+	loadConfig()
+	db.Connect()
 
-	Sc.View("Not Enough Animations")
+	//Tg.Tgbot()
+
+	//Sc.View("Not Enough Animations")
 }

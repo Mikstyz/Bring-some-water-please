@@ -2,6 +2,7 @@ package tgbot
 
 import (
 	"log"
+	"os"
 
 	botApi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
@@ -16,8 +17,21 @@ var knopkiNaKlave = botApi.NewInlineKeyboardMarkup(
 	),
 )
 
-func Tgbot(token string) {
+func loadToken() string {
+	tgToken := os.Getenv("TGTOKEN")
+	log.Printf("tgToken: %s", tgToken)
 
+	return tgToken
+}
+
+func Tgbot() {
+
+	token := loadToken()
+	if token == os.DevNull {
+		log.Fatal("Error loading Token ~_~...")
+	} else {
+		log.Printf("Happy loading token  ~0_0~")
+	}
 	// объект бота + ошибки при подключении
 	bot, err := botApi.NewBotAPI(token)
 	if err != nil {
