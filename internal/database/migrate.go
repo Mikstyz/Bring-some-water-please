@@ -81,15 +81,13 @@ func (r *Migrate) DropAllTables() error {
 }
 
 func (r *Migrate) DropTable(table string) error {
-	var query string = ("DROP TALBE IF EXISTS " + table)
+	query := "DROP TABLE IF EXISTS " + table
 
-	rows, err := r.db.Query(query)
-
-	if err != nil {
-		log.Fatalf("[SQL][DropTable] Ошибка при удалении таблицы\nЗатронуто строк: %d\nERRO: %d", rows, err)
+	if _, err := r.db.Exec(query); err != nil {
+		log.Fatalf("[SQL][DropTable] Ошибка при удалении таблицы %s: %v", table, err)
 		return err
 	}
 
-	log.Printf("[SQL][DropTable] Успешное удаление таблицы\nЗатронуто строк: %d", rows)
+	log.Printf("[SQL][DropTable] Таблица %s успешно удалена", table)
 	return nil
 }
