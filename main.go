@@ -4,6 +4,7 @@ import (
 	//Sc "bring_some_water_please/internal/scrper"
 	//Tg "bring_some_water_please/internal/bot"
 	db "bring_some_water_please/internal/database"
+	test "bring_some_water_please/test"
 	"log"
 	"os"
 
@@ -28,8 +29,9 @@ func loadConfig() {
 
 func main() {
 	loadConfig()
-	db.Connect()
+	r := db.Connect()
 
+	test.MigrateTest(r)
 	//Tg.Tgbot()
 
 	//Sc.View("Not Enough Animations")

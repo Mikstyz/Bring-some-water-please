@@ -1,7 +1,7 @@
 package migrationsdata
 
 const AssemblyModsTable = `
-CREATE TABLE IF NOT EXISTS assembly_mods (
+CREATE TABLE IF NOT EXISTS assemblymods (
 	id INTEGER PRIMARY KEY NOT NULL,
 	mod_id INTEGER,
 	assembly_id INTEGER,
