@@ -42,7 +42,7 @@ func (r *Migrate) CreateTables() error {
 	return nil
 }
 
-func (r *Migrate) DropAllTables() error {
+func (r *Migrate) DropTables() error {
 	const selectTablesQuery = `
 	SELECT name FROM sqlite_master
 	WHERE type='table' AND name NOT LIKE 'sqlite_%';
