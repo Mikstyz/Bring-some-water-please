@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"database/sql"
+	"fmt"
 
 	_ "modernc.org/sqlite"
 )
@@ -10,14 +11,22 @@ type UserRepo struct {
 	db *sql.DB
 }
 
-func NewUserRepo(db *sql.DB) *UserRepo {
+func newUserRepo(db *sql.DB) *UserRepo {
 	return &UserRepo{db: db}
 }
 
-func isUser(r *UserRepo) bool {
+func IsUser(r *UserRepo, tgId uint64) bool {
+
+	fmt.Print(tgId)
+
+	const Query string = ""
+
 	return false
 }
 
-func NewUser(r *UserRepo) bool {
+func NewUser(r *UserRepo, tgId uint64) bool {
+
+	const Query string = ""
+
 	return false
 }

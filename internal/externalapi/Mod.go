@@ -14,8 +14,8 @@ type Files struct {
 }
 
 var ApiMods []struct {
-	ID           string   `json:"id"`
 	Name         string   `json:"name"`
+	ID           string   `json:"id"`
 	GameVersions []string `json:"game_versions"`
 	Loaders      []string `json:"loaders"`
 	Files        []struct {
