@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"os"
 
@@ -13,6 +14,7 @@ func Connect() *sql.DB {
 
 	db, err := sql.Open("sqlite", dbpath)
 
+	fmt.Println("\n====================================================")
 	log.Print("[Dbconnect] Подключение к базе данных...")
 	log.Printf("[Dbconnect] DBPATH: %s", dbpath)
 
@@ -25,5 +27,6 @@ func Connect() *sql.DB {
 	}
 
 	log.Println("[Dbconnect] Успешное подключение к базе данных")
+	fmt.Println("====================================================\n")
 	return db
 }

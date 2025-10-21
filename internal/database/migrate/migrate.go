@@ -43,28 +43,66 @@ func (r *Migrate) TablesInDb() (int32, error) {
 }
 
 func (r *Migrate) CreateTables() error {
+	fmt.Println("====================================================")
 
-	tables := []string{
-		mData.UsersTable,        //пользователи
-		mData.ModsTable,         //Моды
-		mData.VersionsTable,     //версии
-		mData.FilesTable,        //файлы модов url
-		mData.LoadersTable,      //ядра модов
-		mData.AssembliesTable,   //сборки
-		mData.AssemblyModsTable, //моды в сборках
+	tables := map[string]string{
+		"UsersTable":        mData.UsersTable,
+		"ModsTable":         mData.ModsTable,
+		"VersionsTable":     mData.VersionsTable,
+		"FilesTable":        mData.FilesTable,
+		"LoadersTable":      mData.LoadersTable,
+		"AssembliesTable":   mData.AssembliesTable,
+		"AssemblyModsTable": mData.AssemblyModsTable,
 	}
 
-	for _, query := range tables {
-		if _, err := r.db.Exec(query); err != nil {
+	for name, query := range tables {
+		res, err := r.db.Exec(query)
+		if err != nil {
 			log.Printf(`Ошибка при выполнении запроса:
-				Error: %v
-				Query: %s
-				`, err, query)
-
+	Error: %v
+	Query: %s
+	`, err, query)
 			return err
 		}
 
-		log.Print("[SQL][MIGRATE] - Успешное создание таблицы")
+		rowsAffected, err := res.RowsAffected()
+		if err != nil {
+			return fmt.Errorf("ошибка подсчета строк: %w", err)
+		}
+
+		if rowsAffected == 0 {
+			log.Printf("[SQL][MIGRATE] - %s таблица уже существует", name)
+		} else {
+			log.Printf("[SQL][MIGRATE] - %s таблица успешно создана", name)
+		}
+	}
+
+	fmt.Println("====================================================")
+	return nil
+}
+
+func (r *Migrate) InsertDataInTables() error {
+	inserts := []string{
+		mData.DefaultLoadersInsert, // ядра для модов
+	}
+
+	for _, query := range inserts {
+		res, err := r.db.Exec(query)
+		if err != nil {
+			log.Printf("Ошибка при выполнении запроса:\nError: %v\nQuery: %s", err, query)
+			return err
+		}
+
+		rowsAffected, err := res.RowsAffected()
+		if err != nil {
+			return fmt.Errorf("ошибка при подсчете кол-ва строк: %w", err)
+		}
+
+		if rowsAffected == 0 {
+			return fmt.Errorf("не удалось вставить записи в таблицу\nQuery: %s", query)
+		}
+
+		log.Printf("Затронуто строк: %d", rowsAffected)
 	}
 
 	return nil
