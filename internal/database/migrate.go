@@ -41,6 +41,7 @@ func (r *Migrate) CreateTables() error {
 
 	return nil
 }
+
 func (r *Migrate) DropAllTables() error {
 	const selectTablesQuery = `
 	SELECT name FROM sqlite_master
@@ -76,5 +77,19 @@ func (r *Migrate) DropAllTables() error {
 	}
 
 	log.Printf("[SQL][Drop All Tables] Успешное удаление таблиц. Всего удалено: %d", removedTables)
+	return nil
+}
+
+func (r *Migrate) DropTable(table string) error {
+	var query string = ("DROP TALBE IF EXISTS " + table)
+
+	rows, err := r.db.Query(query)
+
+	if err != nil {
+		log.Fatalf("[SQL][DropTable] Ошибка при удалении таблицы\nЗатронуто строк: %d\nERRO: %d", rows, err)
+		return err
+	}
+
+	log.Printf("[SQL][DropTable] Успешное удаление таблицы\nЗатронуто строк: %d", rows)
 	return nil
 }
