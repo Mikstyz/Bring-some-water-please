@@ -2,7 +2,7 @@ package scrper
 
 import (
 	entApi "bring_some_water_please/internal/externalapi"
-	utils "bring_some_water_please/utils"
+	Sutils "bring_some_water_please/utils/stringutils"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -15,7 +15,8 @@ type TexurePackEnties struct {
 }
 
 func GetEntitiesModVersion(ModName string) ([]entApi.Mods, error) {
-	ModName = utils.SpaceToBars(ModName)
+	fmt.Println("====================================================")
+	ModName = Sutils.SpaceToBarsAndLower(ModName)
 	url := fmt.Sprintf("https://api.modrinth.com/v2/project/%s/version", ModName)
 
 	log.Printf("url: {%s}", url)
@@ -38,11 +39,12 @@ func GetEntitiesModVersion(ModName string) ([]entApi.Mods, error) {
 		return nil, err
 	}
 
+	fmt.Println("====================================================")
 	return apiMods, nil
 }
 
 func View(ModName string) {
-
+	fmt.Print("====================================================")
 	mods, error := GetEntitiesModVersion(ModName)
 
 	if error != nil {
@@ -55,7 +57,7 @@ func View(ModName string) {
 		log.Printf("Version %d:", i+1)
 		log.Printf("ID: %s", mod.ID)
 		log.Printf("Name: %s", mod.Name)
-
+		log.Printf("Project_id: %s", mod.Project_id)
 		for j, loader := range mod.Loaders {
 			log.Printf("  Loader %d: %s", j+1, loader)
 		}
@@ -63,6 +65,7 @@ func View(ModName string) {
 		for k, file := range mod.Files {
 			log.Printf("  File %d: %s | URL: %s", k+1, file.Filename, file.URL)
 		}
+		log.Printf("---------------------------------------------------------------------------")
 	}
-	log.Printf("---------------------------------------------------------------------------")
+	fmt.Print("====================================================")
 }

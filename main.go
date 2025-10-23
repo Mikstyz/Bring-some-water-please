@@ -1,10 +1,16 @@
 package main
 
 import (
-	//Sc "bring_some_water_please/internal/scrper"
 	//Tg "bring_some_water_please/internal/bot"
+
 	db "bring_some_water_please/internal/database"
-	m "bring_some_water_please/internal/database/migrate"
+	mig "bring_some_water_please/internal/database/migrate"
+
+	//scr "bring_some_water_please/internal/scrper"
+	//conv "bring_some_water_please/utils/converter"
+
+	serivce "bring_some_water_please/internal/service"
+
 	"database/sql"
 	"fmt"
 	"log"
@@ -51,7 +57,7 @@ func loadDB() *sql.DB {
 `)
 
 	r := db.Connect()
-	migrate := m.NewMigrate(r)
+	migrate := mig.NewMigrate(r)
 
 	err := migrate.CreateTables()
 	if err != nil {
@@ -66,8 +72,15 @@ func loadDB() *sql.DB {
 }
 
 func main() {
+	modname := ("fabric api")
 	loadConfig()
-	loadDB()
+	//loadDB()
+
+	conn := loadDB()
+
+	modService := serivce.NewModSerivce(conn)
+
+	modService.DownloadMod(modname, "1.21", "fabric")
 
 	//test.MigrateTest(r)
 	//Tg.Tgbot()

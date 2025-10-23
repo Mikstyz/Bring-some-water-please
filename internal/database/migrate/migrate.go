@@ -48,9 +48,6 @@ func (r *Migrate) CreateTables() error {
 	tables := map[string]string{
 		"UsersTable":        mData.UsersTable,
 		"ModsTable":         mData.ModsTable,
-		"VersionsTable":     mData.VersionsTable,
-		"FilesTable":        mData.FilesTable,
-		"LoadersTable":      mData.LoadersTable,
 		"AssembliesTable":   mData.AssembliesTable,
 		"AssemblyModsTable": mData.AssemblyModsTable,
 	}
@@ -82,9 +79,7 @@ func (r *Migrate) CreateTables() error {
 }
 
 func (r *Migrate) InsertDataInTables() error {
-	inserts := []string{
-		mData.DefaultLoadersInsert, // ядра для модов
-	}
+	inserts := []string{}
 
 	for _, query := range inserts {
 		res, err := r.db.Exec(query)
