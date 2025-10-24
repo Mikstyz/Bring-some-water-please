@@ -15,6 +15,10 @@ func newUserRepo(db *sql.DB) *UserRepo {
 	return &UserRepo{db: db}
 }
 
+
+//=================================================
+//                     Наличие юзера в бд
+//=================================================
 func IsUser(r *UserRepo, tgId uint64) bool {
 
 	fmt.Print(tgId)
@@ -24,6 +28,10 @@ func IsUser(r *UserRepo, tgId uint64) bool {
 	return false
 }
 
+
+//=================================================
+//                     Сохрание юзера в бд
+//=================================================
 func NewUser(r *UserRepo, tgId uint64) bool {
 
 	const Query string = ""

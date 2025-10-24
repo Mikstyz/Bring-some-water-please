@@ -5,6 +5,7 @@ import (
 	Sutils "bring_some_water_please/utils/stringutils"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 )
@@ -41,6 +42,26 @@ func GetEntitiesModVersion(ModName string) ([]entApi.Mods, error) {
 
 	fmt.Println("====================================================")
 	return apiMods, nil
+}
+
+func GetFileInUrlBytes(url string) ([]byte, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, fmt.Errorf("ошибка при запросе URL %s: %w", url, err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("не удалось скачать файл %s, статус: %d", url, resp.StatusCode)
+	}
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("ошибка при чтении данных с URL %s: %w", url, err)
+	}
+
+	log.Printf("Файл успешно скачан: %s, размер: %d байт", url, len(data))
+	return data, nil
 }
 
 func View(ModName string) {

@@ -5,6 +5,7 @@ import (
 
 	db "bring_some_water_please/internal/database"
 	mig "bring_some_water_please/internal/database/migrate"
+	ent "bring_some_water_please/internal/entities"
 
 	//scr "bring_some_water_please/internal/scrper"
 	//conv "bring_some_water_please/utils/converter"
@@ -72,15 +73,30 @@ func loadDB() *sql.DB {
 }
 
 func main() {
-	modname := ("fabric api")
+	var UserId int64 = 1
+
+	modName := "fabric api"
+	modVersion := "1.21"
+	modLoader := "fabric"
+
 	loadConfig()
 	//loadDB()
 
 	conn := loadDB()
 
-	modService := serivce.NewModSerivce(conn)
+	modService := serivce.NewDownloadModSerivce(conn)
 
-	modService.DownloadMod(modname, "1.21", "fabric")
+	//modService.DownloadMod(modname, "1.21", "fabric")
+	var mods = []ent.ModFile{
+		ent.ModFile{
+			Name:    modName,
+			Version: modVersion,
+			Loader:  modLoader,
+		},
+	}
+
+	path, _ := modService.DownloadMods(mods, UserId)
+	log.Print(path)
 
 	//test.MigrateTest(r)
 	//Tg.Tgbot()

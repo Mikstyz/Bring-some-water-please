@@ -18,7 +18,12 @@ func NewModSerivce(db *sql.DB) *ModService {
 	return &ModService{db: db}
 }
 
-func isMod(s *ModService, Name, version, loader string) (*entities.DataMods, error) {
+// =========================================
+//
+//	Наличие мода в бд
+//
+// =========================================
+func IsMod(s *ModService, Name, version, loader string) (*entities.DataMods, error) {
 	repoMod := repositories.NewModRepo(s.db)
 
 	isMod, err := repoMod.FindMod(Name, version, loader)
@@ -68,25 +73,4 @@ func isMod(s *ModService, Name, version, loader string) (*entities.DataMods, err
 	}
 
 	return isMod, nil
-}
-
-func (s *ModService) DownloadMod(Name string, Version string, Loader string) (string, error) {
-	ismod, err := isMod(s, Name, Version, Loader)
-	if err != nil {
-		return "", err
-	}
-
-	if ismod == nil {
-		log.Printf("Мод '%s' не найден, пропускаем обработку\n", Name)
-		return "", nil
-	}
-
-	log.Println(" + Мод найден")
-
-	VatchData.VatchConvert(*ismod)
-
-	repoMod := repositories.NewModRepo(s.db)
-	repoMod.LoadMod(Name, Version, Loader)
-
-	return "", nil
 }
