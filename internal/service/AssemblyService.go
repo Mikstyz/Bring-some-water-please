@@ -84,6 +84,8 @@ func (b *buildAssembly) AddModInAssembly(ModName string) error {
 		return fmt.Errorf("ModName является пустым")
 	}
 
+	//Проверка есть ли данный мод на Loader пользователя
+
 	for _, elem := range b.Mods {
 		if elem == ModName {
 			return nil
@@ -133,6 +135,10 @@ func (s *AssemblyService) SaveInDnAssembly(b *buildAssembly, userId int64) error
 		Name:   b.Name,
 	}
 
+	//тут должны открываться транзакция
+
+	//Сохранение данных о сборке
+	//Добавить передачу тарнзакции в сохрание инфы о сборке
 	asId, err := repoAssembly.SaveInfoAssembly(assembly, userId)
 
 	if err != nil {
@@ -142,11 +148,21 @@ func (s *AssemblyService) SaveInDnAssembly(b *buildAssembly, userId int64) error
 
 	fmt.Printf("new assembly added, Id: %s\nLoader: %s, Name: %s\n", asId, b.Loader, b.Name)
 
+	//Сохраниение модов сборки
+	//Функция которая будет строить строку добавляения всех модов в сборку и принимать в себя открытую транзакцию
+
 	return nil
 }
 
 // Обновляет сбору в бд
 func (s *AssemblyService) UpdateInDnAssembly(newData *buildAssembly, AssemblyId string) error {
 	//обновление сборки в бд
+	//Просто перезаписываем фулл инфу (главное чтобы не nil)
+
+	//Обновление модов сборки в бд
+
+	// Получение модов
+	// Сравниваем новый лист модов и старый, если в новом листе нет старого мода, то мы его удаляем из бд (по транзакции)
+	// Сравниваем новый лист модов и старый, если в новом есть моды которых нет в старом, то мы их добавляем в бд (по транзакции)
 	return nil
 }
