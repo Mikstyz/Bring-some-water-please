@@ -63,7 +63,7 @@ func (r *AssemblyRepo) FetchInfoByIdAssembly(AssemblyId string) (*ent.Assemblies
 }
 
 // Сохранение инфы о сборке в бд
-func (r *AssemblyRepo) SaveInfoAssembly(assembly ent.Assemblies, userid int64) (Assemblyid string, err error) {
+func SaveInfoAssembly(tx *sql.Tx, assembly ent.Assemblies, userid int64) (Assemblyid string, err error) {
 
 	const Query = `
 	INSERT INTO assemblies
@@ -74,7 +74,7 @@ func (r *AssemblyRepo) SaveInfoAssembly(assembly ent.Assemblies, userid int64) (
 
 	Assemblyid = unCash.NewCash(userid)
 
-	_, err = r.db.Exec(
+	_, err = tx.Exec(
 		Query,
 		Assemblyid,
 		assembly.Name,
@@ -159,26 +159,10 @@ func (r *AssemblyRepo) RemoveModsByAssembly(mods []string, assemblyId string, us
 }
 
 // Добавить моды в сборку
-func (r *AssemblyRepo) AddModsByAssembly(mods []string, assemblyId string, userId int64) error {
-	// Проверка, владеет ли пользователь сборкой
-	if err := r.IsCreatorAssembly(userId, assemblyId); err != nil {
-		return err
-	}
-
-	// Начинаем транзакцию
-	tx, err := r.db.Begin()
-	if err != nil {
-		return fmt.Errorf("ошибка начала транзакции: %w", err)
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-		}
-	}()
-
+func AddModsByAssembly(tx *sql.Tx, mods []string, assemblyId string, userId int64) error {
 	// Вставляем моды по одному
 	for _, mod := range mods {
-		_, err = tx.Exec(
+		_, err := tx.Exec(
 			`INSERT INTO assemblymods (mod_name, assembly_id) VALUES (?, ?)`,
 			mod,
 			assemblyId,
@@ -186,11 +170,6 @@ func (r *AssemblyRepo) AddModsByAssembly(mods []string, assemblyId string, userI
 		if err != nil {
 			return fmt.Errorf("ошибка вставки мода %s: %w", mod, err)
 		}
-	}
-
-	// Коммитим транзакцию
-	if err := tx.Commit(); err != nil {
-		return fmt.Errorf("ошибка коммита транзакции: %w", err)
 	}
 
 	return nil

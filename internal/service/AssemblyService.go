@@ -128,7 +128,6 @@ func (s *AssemblyService) DownloadInDnAssembly(AssemblyId string) ([]byte, error
 
 // Сохраняет сборку в бд
 func (s *AssemblyService) SaveInDnAssembly(b *buildAssembly, userId int64) error {
-	repoAssembly := repo.NewAssemblyRepo(s.db)
 
 	var assembly = ent.Assemblies{
 		Loader: b.Loader,
@@ -136,14 +135,28 @@ func (s *AssemblyService) SaveInDnAssembly(b *buildAssembly, userId int64) error
 	}
 
 	//тут должны открываться транзакция
+	tx, err := s.db.Begin()
+	if err != nil {
+		return fmt.Errorf("ошибка начала транзакции: %w", err)
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		}
+	}()
 
 	//Сохранение данных о сборке
-	//Добавить передачу тарнзакции в сохрание инфы о сборке
-	asId, err := repoAssembly.SaveInfoAssembly(assembly, userId)
-
+	asId, err := repo.SaveInfoAssembly(tx, assembly, userId)
 	if err != nil {
-		log.Printf("ошибка при сохранении сборки: ERROR: %w \n", err)
-		return err
+		tx.Rollback()
+		return fmt.Errorf("ошибка при выполнении транзакции сохранения информации о инфе собрки")
+	}
+
+	//Сохранение модов сборки
+	err = repo.AddModsByAssembly(tx, b.Mods, asId, userId)
+	if err != nil {
+		tx.Rollback()
+		return fmt.Errorf("ошибка при выполнении транзакции сохранения модов сборки")
 	}
 
 	fmt.Printf("new assembly added, Id: %s\nLoader: %s, Name: %s\n", asId, b.Loader, b.Name)
